@@ -116,6 +116,8 @@ export function activate(context: vscode.ExtensionContext): ITestHub {
 	registerCommand('test-explorer.show-error', (message) => testExplorer.showError(message));
 
 	registerCommand('test-explorer.show-source', (node) => testExplorer.showSource(node));
+	
+	registerCommand('test-explorer.select', (node) => testExplorer.select(node));
 
 	registerCommand('test-explorer.enable-autorun', (node) => testExplorer.setAutorun(node));
 

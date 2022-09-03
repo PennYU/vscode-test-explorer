@@ -19,7 +19,12 @@ export class ErrorNode {
 		}
 		label += ': Error';
 
-		const treeItem = new vscode.TreeItem(label, vscode.TreeItemCollapsibleState.None);
+		const uri = vscode.Uri.from({
+			path: label,
+			scheme: "",
+			query: this.id,
+		})
+		const treeItem = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.None);
 		treeItem.id = this.id;
 		treeItem.iconPath = this.collection.explorer.iconPaths.errored;
 		treeItem.contextValue = 'error';

@@ -22,4 +22,6 @@ export interface TreeNode {
 	setAutorun(autorun: boolean): void;
 	getTreeItem(): vscode.TreeItem;
 	getFullLabel(): string;
+	readonly selected: Boolean;
+	setSelected(selected: Boolean): void;
 }

@@ -15,6 +15,7 @@ export class TestSuiteNode implements TreeNode {
 	private tooltip?: string;
 	private _file?: string;
 	private _line?: number;
+	private _selected: Boolean = false;
 
 	private _fileUri: string | undefined;
 	get fileUri(): string | undefined { return this._fileUri; }
@@ -24,6 +25,7 @@ export class TestSuiteNode implements TreeNode {
 	get children(): TreeNode[] { return this._children; }
 	get file(): string | undefined { return this._file; }
 	get line(): number | undefined { return this._line; }
+	get selected(): Boolean { return this._selected; }
 
 	get adapterIds(): string[] {
 		if (this.isMergedNode) {
@@ -229,7 +231,13 @@ export class TestSuiteNode implements TreeNode {
 			label = `${this.collection.adapter.workspaceFolder.name} - ${label}`;
 		}
 
-		const treeItem = new vscode.TreeItem(label, vscode.TreeItemCollapsibleState.Collapsed);
+		const uri = vscode.Uri.from({
+			path: label,
+			scheme: "",
+			query: this.uniqueId,
+			fragment: this._fileUri
+		})
+		const treeItem = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.Collapsed);
 		treeItem.id = this.uniqueId;
 		treeItem.iconPath = this.collection.explorer.iconPaths[stateIcon(this.state)];
 		treeItem.contextValue =
@@ -251,5 +259,9 @@ export class TestSuiteNode implements TreeNode {
 
 	getFullLabel(): string {
 		return this.parent ? `${this.parent.getFullLabel()} ${this.info.label}` : this.info.label;
+	}
+
+	setSelected(selected: Boolean): void {
+		this._selected = selected;
 	}
 }

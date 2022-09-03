@@ -6,6 +6,7 @@ import { ErrorNode } from './tree/errorNode';
 import { IconPaths } from './iconPaths';
 import { TreeEventDebouncer } from './treeEventDebouncer';
 import { Decorator } from './decorator';
+import { SelectionDecorator } from './selectionDecorator';
 import { pickNodes, findLineContaining, getAdapterIds } from './util';
 import { SortSetting } from './tree/sort';
 import { TestNode } from './tree/testNode';
@@ -20,7 +21,9 @@ export class TestExplorer implements TestController, vscode.TreeDataProvider<Tre
 
 	public readonly iconPaths: IconPaths;
 	public readonly decorator: Decorator;
+	public readonly selectionDecorator: SelectionDecorator;
 	public readonly treeEvents: TreeEventDebouncer;
+	public readonly selectedNodes: TreeNode[];
 
 	private readonly outputChannel: vscode.OutputChannel;
 	private nodesShownInOutputChannel: undefined | {
@@ -47,7 +50,9 @@ export class TestExplorer implements TestController, vscode.TreeDataProvider<Tre
 	) {
 		this.iconPaths = new IconPaths(context);
 		this.decorator = new Decorator(context, this);
+		this.selectionDecorator = new SelectionDecorator(context, this);
 		this.treeEvents = new TreeEventDebouncer(this.collections, this.treeDataChanged);
+		this.selectedNodes = [];
 
 		this.outputChannel = vscode.window.createOutputChannel("Test Explorer");
 		context.subscriptions.push(this.outputChannel);
@@ -277,6 +282,21 @@ export class TestExplorer implements TestController, vscode.TreeDataProvider<Tre
 				editor.revealRange(range.with(new vscode.Position(Math.max(line! - 1, 0), 0)), vscode.TextEditorRevealType.AtTop);
 			}
 		}
+	}
+	
+	async select(node: TreeNode): Promise<void> {
+		node.setSelected(!node.selected);
+		this.selectedNodes.push(node);
+
+		const uri = vscode.Uri.from({
+			path: node.info.label,
+			scheme: "",
+			query: node.uniqueId,
+		});
+
+		this.selectionDecorator.updateDecorationsForSource(uri);
+
+		console.log(node);
 	}
 
 	setAutorun(node?: any): void {

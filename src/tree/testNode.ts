@@ -15,6 +15,7 @@ export class TestNode implements TreeNode {
 	private tooltip?: string;
 	private _file?: string;
 	private _line?: number;
+	private _selected: Boolean = false;
 
 	private _fileUri: string | undefined;
 	get fileUri(): string | undefined { return this._fileUri; }
@@ -25,6 +26,7 @@ export class TestNode implements TreeNode {
 	readonly children: TreeNode[] = [];
 	get file(): string | undefined { return this._file; }
 	get line(): number | undefined { return this._line; }
+	get selected(): Boolean { return this._selected; }
 
 	get adapterIds(): string[] { return [ this.info.id ]; }
 
@@ -206,7 +208,13 @@ export class TestNode implements TreeNode {
 
 		this.sendStateNeeded = false;
 
-		const treeItem = new vscode.TreeItem(this.info.label, vscode.TreeItemCollapsibleState.None);
+		const uri = vscode.Uri.from({
+			path: this.info.label,
+			scheme: '',
+			query: this.uniqueId,
+			fragment: this._fileUri
+		});
+		const treeItem = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.None);
 		treeItem.id = this.uniqueId;
 		treeItem.iconPath = this.collection.explorer.iconPaths[stateIcon(this.state)];
 		treeItem.contextValue =
@@ -226,5 +234,9 @@ export class TestNode implements TreeNode {
 
 	getFullLabel(): string {
 		return `${this.parent.getFullLabel()} ${this.info.label}`;
+	}
+
+	setSelected(selected: Boolean): void {
+		this._selected = selected;
 	}
 }
