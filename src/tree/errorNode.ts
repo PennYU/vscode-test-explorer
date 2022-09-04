@@ -22,6 +22,7 @@ export class ErrorNode {
 		const uri = vscode.Uri.from({
 			path: label,
 			scheme: "",
+			authority: "yzp",
 			query: this.id,
 		})
 		const treeItem = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.None);

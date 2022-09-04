@@ -234,6 +234,7 @@ export class TestSuiteNode implements TreeNode {
 		const uri = vscode.Uri.from({
 			path: label,
 			scheme: "",
+			authority: "yzp2",
 			query: this.uniqueId,
 			fragment: this._fileUri
 		})

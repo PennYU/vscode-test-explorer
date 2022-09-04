@@ -287,15 +287,10 @@ export class TestExplorer implements TestController, vscode.TreeDataProvider<Tre
 	async select(node: TreeNode): Promise<void> {
 		node.setSelected(!node.selected);
 		this.selectedNodes.push(node);
-
-		const uri = vscode.Uri.from({
-			path: node.info.label,
-			scheme: "",
-			query: node.uniqueId,
-		});
-
-		this.selectionDecorator.updateDecorationsForSource(uri);
-
+		const treeItem = node.getTreeItem()
+		if (treeItem.resourceUri) {
+			this.selectionDecorator.updateDecorationsForSource(treeItem.resourceUri);
+		}
 		console.log(node);
 	}
 
