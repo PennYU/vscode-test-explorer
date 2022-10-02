@@ -247,10 +247,12 @@
       {
         "command": "test-explorer.run-all",
         "title": "Test Explorer: Run all tests",
-        "icon": {
-          "dark": "./icons/start-dark.svg",
-          "light": "./icons/start-light.svg"
-        }
+        "icon": "$(run-all)"
+      },
+      {
+        "command": "test-explorer.run-selected",
+        "title": "Test Explorer: Run selected tests",
+        "icon": "$(run)"
       },
       {
         "command": "test-explorer.run",
@@ -343,8 +345,13 @@
       },
       {
         "command": "test-explorer.select",
-        "title": "Test Explorer: Select test",
-        "icon": "./icons/checkbox-icon.png"
+        "title": "Select test",
+        "icon": "$(check)"
+      },
+      {
+        "command": "test-explorer.deselect",
+        "title": "Deselect test",
+        "icon": "$(close)"
       },
       {
         "command": "test-explorer.enable-autorun",
@@ -403,23 +410,28 @@
           "when": "view == test-explorer && !testsRunning"
         },
         {
-          "command": "test-explorer.cancel",
+          "command": "test-explorer.run-selected",
           "group": "navigation@2",
+          "when": "view == test-explorer && !testsRunning"
+        },
+        {
+          "command": "test-explorer.cancel",
+          "group": "navigation@3",
           "when": "view == test-explorer && testsRunning"
         },
         {
           "command": "test-explorer.reload",
-          "group": "navigation@3",
+          "group": "navigation@4",
           "when": "view == test-explorer && !testsLoading"
         },
         {
           "command": "test-explorer.reloading",
-          "group": "navigation@4",
+          "group": "navigation@5",
           "when": "view == test-explorer && testsLoading"
         },
         {
           "command": "test-explorer.expand",
-          "group": "navigation@5",
+          "group": "navigation@6",
           "when": "view == test-explorer && showTestExplorerExpandButton"
         },
         {
@@ -516,6 +528,11 @@
         },
         {
           "command": "test-explorer.select",
+          "group": "inline@3",
+          "when": "view == test-explorer"
+        },
+        {
+          "command": "test-explorer.deselect",
           "group": "inline@3",
           "when": "view == test-explorer"
         },

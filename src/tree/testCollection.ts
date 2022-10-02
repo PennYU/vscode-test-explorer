@@ -623,11 +623,33 @@ export class TestCollection {
 		return nodes;
 	}
 
+	getSelectedNodes(node: TreeNode): TreeNode[] {
+		let selectedNodes: TreeNode[] = [];
+		if (this.allSelected(node)) {
+			selectedNodes.push(node);
+		} else if (node.children) {
+			node.children.forEach(child => {
+				selectedNodes = selectedNodes.concat(this.getSelectedNodes(child));
+			});
+		}
+		return selectedNodes;
+	}
+
 	dispose(): void {
 		for (const disposable of this.disposables) {
 			disposable.dispose();
 		}
 		this.disposables = [];
+	}
+
+	private allSelected(node: TreeNode): boolean {
+		if (!node.selected) {
+			return false;
+		}
+		if (node.children) {
+			return node.children.every(child => this.allSelected(child));
+		}
+		return true;
 	}
 
 	private getConfiguration(): vscode.WorkspaceConfiguration {

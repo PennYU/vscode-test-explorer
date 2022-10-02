@@ -18,21 +18,36 @@ export class SelectionDecorator implements vscode.FileDecorationProvider {
     }
 	
 	provideFileDecoration(uri: vscode.Uri): vscode.ProviderResult<vscode.FileDecoration> {
+		if (uri.scheme !== 'test-explorer') {
+			return;
+		}
 		const children = this.testExplorer.getChildren();
 		const found = children.find(e => {
 			const node = (e as TestNode);
-			if (uri.query && node.info.file) {
-				return uri.query.includes(node.info.file) && node.selected;
-			}
-			return false;
+			return node.uniqueId === uri.query;
 		});
-		console.log(uri);
-		if (found) {
+		if (found && this.isSelected(found)) {
 			return {
-				badge: "\u2705",
-				tooltip: 'Has Uncommitted Changes',
+				badge: '\u2714',
+				tooltip: 'Selected test',
 			};
+		} else {
+			return {
+				badge: '　',
+			}
 		}
-		return;
+	}
+
+	private isSelected(node: TestNode): boolean {
+		if (node.selected) {
+			return true;
+		}
+		if (node.children) {
+			return node.children.find(e => {
+				const testNode = (e as TestNode);
+				return this.isSelected(testNode);
+			}) ? true : false;
+		}
+		return false;
 	}
 }

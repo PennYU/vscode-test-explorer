@@ -233,10 +233,8 @@ export class TestSuiteNode implements TreeNode {
 
 		const uri = vscode.Uri.from({
 			path: label,
-			scheme: "",
-			authority: "yzp2",
+			scheme: 'test-explorer',
 			query: this.uniqueId,
-			fragment: this._fileUri
 		})
 		const treeItem = new vscode.TreeItem(uri, vscode.TreeItemCollapsibleState.Collapsed);
 		treeItem.id = this.uniqueId;

@@ -23,7 +23,6 @@ export class TestExplorer implements TestController, vscode.TreeDataProvider<Tre
 	public readonly decorator: Decorator;
 	public readonly selectionDecorator: SelectionDecorator;
 	public readonly treeEvents: TreeEventDebouncer;
-	public readonly selectedNodes: TreeNode[];
 
 	private readonly outputChannel: vscode.OutputChannel;
 	private nodesShownInOutputChannel: undefined | {
@@ -52,7 +51,6 @@ export class TestExplorer implements TestController, vscode.TreeDataProvider<Tre
 		this.decorator = new Decorator(context, this);
 		this.selectionDecorator = new SelectionDecorator(context, this);
 		this.treeEvents = new TreeEventDebouncer(this.collections, this.treeDataChanged);
-		this.selectedNodes = [];
 
 		this.outputChannel = vscode.window.createOutputChannel("Test Explorer");
 		context.subscriptions.push(this.outputChannel);
@@ -155,6 +153,17 @@ export class TestExplorer implements TestController, vscode.TreeDataProvider<Tre
 				}
 			}
 		}
+	}
+
+	runSelected() {
+		for (const collection of this.collections.values()) {
+			if (collection.suite) {
+				try {
+					const nodes = collection.getSelectedNodes(collection.suite);
+					collection.adapter.run(getAdapterIds(nodes));
+				} catch (err) {}
+			}
+		}	
 	}
 
 	rerun(): Promise<void> {
@@ -284,14 +293,15 @@ export class TestExplorer implements TestController, vscode.TreeDataProvider<Tre
 		}
 	}
 	
-	async select(node: TreeNode): Promise<void> {
-		node.setSelected(!node.selected);
-		this.selectedNodes.push(node);
+	async select(node: TreeNode, checked: boolean): Promise<void> {
+		node.setSelected(checked);
 		const treeItem = node.getTreeItem()
 		if (treeItem.resourceUri) {
 			this.selectionDecorator.updateDecorationsForSource(treeItem.resourceUri);
 		}
-		console.log(node);
+		if (node.children && node.children.length > 0) {
+			node.children.forEach(child => child.setSelected(checked));
+		}
 	}
 
 	setAutorun(node?: any): void {

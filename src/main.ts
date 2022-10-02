@@ -81,6 +81,8 @@ export function activate(context: vscode.ExtensionContext): ITestHub {
 
 	registerCommand('test-explorer.run-all', () => testExplorer.run());
 
+	registerCommand('test-explorer.run-selected', () => testExplorer.runSelected());
+
 	registerCommand('test-explorer.run', (clickedNode, allNodes) => testExplorer.run(allNodes || [ clickedNode ], false));
 
 	registerCommand('test-explorer.pick-and-run', (nodes) => testExplorer.run(nodes, true));
@@ -117,7 +119,9 @@ export function activate(context: vscode.ExtensionContext): ITestHub {
 
 	registerCommand('test-explorer.show-source', (node) => testExplorer.showSource(node));
 	
-	registerCommand('test-explorer.select', (node) => testExplorer.select(node));
+	registerCommand('test-explorer.select', (node) => testExplorer.select(node, true));
+
+	registerCommand('test-explorer.deselect', (node) => testExplorer.select(node, false));
 
 	registerCommand('test-explorer.enable-autorun', (node) => testExplorer.setAutorun(node));
 
